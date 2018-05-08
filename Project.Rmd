@@ -7,7 +7,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Start here
+# Introduction
+
+# Data Gathering and cleaning
 
 ```{r}
 library(cluster)
@@ -20,3 +22,40 @@ tr_rows = sample(nrow(dat), 0.8 * nrow(dat))
 tr_dat = dat[tr_rows,]
 te_dat = dat[-tr_rows,]
 ```
+
+# Initial Exploration and visualization
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+# First model
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+# Second Model
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+# Conclusion
+
