@@ -1,0 +1,21 @@
+---
+title: "Project2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Start here
+
+```{r}
+library(cluster)
+dat = read.csv("https://raw.githubusercontent.com/AMartinez2/CST383-Project/master/ks-projects-201801.csv")
+levels(dat$state)[which(levels(dat$state)=="canceled")] = "failed"
+
+# split our data into testing and training data
+tr_rows = sample(nrow(filter), 0.8 * nrow(filter))
+tr_dat = filter[tr_rows,]
+te_dat = filter[-tr_rows,]
+```
