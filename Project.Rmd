@@ -16,7 +16,7 @@ dat = dat[complete.cases(dat),]
 levels(dat$state)[which(levels(dat$state)=="canceled")] = "failed"
 dat = dat[!(dat$state=="undefined" | dat$state=="suspended" | dat$state=="live"),]
 # split our data into testing and training data
-tr_rows = sample(nrow(filter), 0.8 * nrow(filter))
-tr_dat = filter[tr_rows,]
-te_dat = filter[-tr_rows,]
+tr_rows = sample(nrow(dat), 0.8 * nrow(dat))
+tr_dat = dat[tr_rows,]
+te_dat = dat[-tr_rows,]
 ```
