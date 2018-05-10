@@ -16,6 +16,7 @@ The data set used contains 378,661 entries, and each entry has 15 variables. The
 Once the data was cleaned, it was split into training and test data.
 ```{r}
 library(cluster)
+library(e1071)
 dat = read.csv("https://raw.githubusercontent.com/AMartinez2/CST383-Project/master/ks-projects-201801.csv")
 dat = dat[complete.cases(dat),]
 levels(dat$state)[which(levels(dat$state)=="canceled")] = "failed"
@@ -28,32 +29,49 @@ te_dat = dat[-tr_rows,]
 
 # Initial Exploration and visualization
 
-```{r}
+Perhaps the goal for the project influences how people will look at project which would affect if they choose to contribute. If we look at the density of goal for projects that passed (in green) and failed (in red), we can see that values align well within the same curve. The goal of the project does not seem to affect wether it passes or fails. 
 
+```{r}
+pass = dat[dat$state == "successful",]
+fail = dat[dat$state == "failed",]
+plot(density(pass$goal), xlim=c(0,100000), col='green', main='Double Density of Goal')
+lines(density(fail$goal), col='red')
+```
+
+```{r}
+par(mar=c(3,6,1,4))
+pass = dat[dat$state == "successful",]
+fail = dat[dat$state == "failed",]
+test2 <- rbind(table(pass$main_category),table(fail$main_category))
+barplot(test2,beside=T, col=c('green','red'), horiz=TRUE, las=1)
 ```
 
 ```{r}
 
 ```
 
+# First model (Naive Bayes)
 ```{r}
-
+fit = naiveBayes(state ~ main_category, data=tr_dat)
+predicts = predict(fit, newdata=te_dat)
+conf_mtx = table(predicts, te_dat$state)
+conf_mtx[c('failed','successful'),c('failed','successful')]
+mean(predicts == te_dat$state)
 ```
 
-# First model
-
 ```{r}
+library(rpart)
 
+fit = rpart(state ~ goal, data = tr_dat)
+predicted = predict(fit, te_dat, type="class")
+actual = te_dat$state
+table(actual, predicted)
+mean(actual == predicted)
 ```
 
-```{r}
-
-```
-
-# Second Model
+# Second Model (Naive Bayes)
 
 ```{r}
-
 ```
 
 ```{r}
