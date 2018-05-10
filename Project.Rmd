@@ -22,6 +22,7 @@ dat = read.csv("https://raw.githubusercontent.com/AMartinez2/CST383-Project/mast
 dat = dat[complete.cases(dat),]
 levels(dat$state)[which(levels(dat$state)=="canceled")] = "failed"
 dat = dat[!(dat$state=="undefined" | dat$state=="suspended" | dat$state=="live"),]
+dat$state = factor(dat$state)
 # split our data into testing and training data
 tr_rows = sample(nrow(dat), 0.8 * nrow(dat))
 tr_dat = dat[tr_rows,]
