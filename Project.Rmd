@@ -15,6 +15,7 @@ This report will utilize various factors from a publicly provided Kickstarter da
 The data set used contains 378,661 entries, and each entry has 15 variables. There were 3797 entries that had N/A values somewhere in the row, which we decided to remove from the data set. The data set also included entries that had states other than 'Success' or 'Failure', so those entries were either condensed into the two states or dropped completely.
 Once the data was cleaned, it was split into training and test data.
 ```{r}
+set.seed(123)
 library(cluster)
 library(e1071)
 dat = read.csv("https://raw.githubusercontent.com/AMartinez2/CST383-Project/master/ks-projects-201801.csv")
@@ -38,6 +39,7 @@ plot(density(pass$goal), xlim=c(0,100000), col='green', main='Double Density of 
 lines(density(fail$goal), col='red')
 ```
 
+######### We might want to remove this ##############
 ```{r}
 par(mar=c(3,6,1,4))
 pass = dat[dat$state == "successful",]
@@ -52,7 +54,7 @@ barplot(test2,beside=T, col=c('green','red'), horiz=TRUE, las=1)
 
 # First model (Naive Bayes)
 ```{r}
-fit = naiveBayes(state ~ main_category, data=tr_dat)
+fit = naiveBayes(state ~ category, data=tr_dat)
 predicts = predict(fit, newdata=te_dat)
 conf_mtx = table(predicts, te_dat$state)
 conf_mtx[c('failed','successful'),c('failed','successful')]
@@ -69,9 +71,16 @@ table(actual, predicted)
 mean(actual == predicted)
 ```
 
-# Second Model (Naive Bayes)
+# Second Model 
 
 ```{r}
+fit = glm(state ~ main_category + goal, data=tr_dat, family=binomial)
+y = predict(fit, newdata=te_dat, type="response")
+predicts = ifelse(y > 0.5, "successful", "failed")
+actuals = te_dat$state
+conf_mtx = table(predicts, actuals)
+conf_mtx
+mean(predicts == actuals)
 ```
 
 ```{r}
