@@ -23,6 +23,13 @@ dat = dat[complete.cases(dat),]
 levels(dat$state)[which(levels(dat$state)=="canceled")] = "failed"
 dat = dat[!(dat$state=="undefined" | dat$state=="suspended" | dat$state=="live"),]
 dat$state = factor(dat$state)
+# Date conversion:
+ldates = as.Date(dat$launched, format = "%Y-%m-%d")
+ddates = as.Date(dat$deadline, format = "%Y-%m-%d")
+
+dat$kicklen = as.numeric(ddates - ldates)
+
+table(dat$kicklen)
 # split our data into testing and training data
 tr_rows = sample(nrow(dat), 0.8 * nrow(dat))
 tr_dat = dat[tr_rows,]
@@ -56,7 +63,6 @@ under_med_goal_success = nrow(dat[dat$goal <= medgoal & dat$state == "successful
 over_med_goal_success = nrow(dat[dat$goal > medgoal & dat$state == "successful",])/n_success
 a = c(under_med_goal_success,over_med_goal_success)
 barplot(a)
-
 ```
 
 # First model (Naive Bayes)
