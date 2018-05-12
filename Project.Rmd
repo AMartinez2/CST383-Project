@@ -54,11 +54,20 @@ barplot(test2,beside=T, col=c('green','red'), horiz=TRUE, las=1)
 ```
 
 ```{r}
+#goal
 medgoal = median(dat$goal)
 n_success = nrow(dat[dat$state == "successful",])
 under_med_goal_success = nrow(dat[dat$goal <= medgoal & dat$state == "successful",])/n_success
 over_med_goal_success = nrow(dat[dat$goal > medgoal & dat$state == "successful",])/n_success
 a = c(under_med_goal_success,over_med_goal_success)
+
+#length
+medlen = median(dat$kicklen)
+under_med_len_success = nrow(dat[dat$kicklen < medlen & dat$state == "successful",])/n_success
+over_med_len_success = nrow(dat[dat$kicklen > medlen & dat$state == "successful",])/n_success
+under_med_len_success
+over_med_len_success
+
 barplot(a)
 ```
 
