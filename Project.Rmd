@@ -55,7 +55,7 @@ n_success = nrow(dat[dat$state == "successful",])
 under_med_goal_success = nrow(dat[dat$goal <= medgoal & dat$state == "successful",])/n_success
 over_med_goal_success = nrow(dat[dat$goal > medgoal & dat$state == "successful",])/n_success
 a = c(under_med_goal_success,over_med_goal_success)
-plot(a)
+barplot(a)
 
 ```
 
