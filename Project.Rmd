@@ -46,19 +46,29 @@ te_dat = dat[-tr_rows,]
 #goal
 medgoal = median(dat$goal)
 n_success = nrow(dat[dat$state == "successful",])
+n_size = nrow(dat)
 under_med_goal_success = nrow(dat[dat$goal <= medgoal & dat$state == "successful",])/n_success
 over_med_goal_success = nrow(dat[dat$goal > medgoal & dat$state == "successful",])/n_success
-a = c(under_med_goal_success,over_med_goal_success)
-
+goalvec = c(under_med_goal_success,over_med_goal_success)
+a
 #length
 medlen = median(dat$kicklen)
-under_med_len_success = nrow(dat[dat$kicklen < medlen & dat$state == "successful",])/n_success
+funder_med_len_success = nrow(dat[dat$kicklen <= medlen & dat$state == "successful",])/n_success
+tunder_med_len_success = nrow(dat[dat$kicklen < medlen & dat$state == "successful",])/n_success
 over_med_len_success = nrow(dat[dat$kicklen > medlen & dat$state == "successful",])/n_success
-under_med_len_success
+true_med_len_success = nrow(dat[dat$kicklen == medlen & dat$state == "successful",])/n_success
+tunder_med_len_success
 over_med_len_success
-
-barplot(a)
+true_med_len_success
+lenvecf = c(funder_med_len_success, over_med_len_success)
+lenvect = c(tunder_med_len_success, true_med_len_success, over_med_len_success)
+comb = c(goalvec, lenvecf)
+par(mfrow = c(2,1))
+barplot(comb, beside = TRUE, ylim = c(0, 1), col = c("green", "red"), main = "Analysis of available Numeric variables", names.arg = c("Goal1", "", "Length", ""),legend.text=c('Below or at Median','Above Median'), args.legend=list(text.col=c("green", "red"),bty='n'))
 ```
+This was a method we used to see if any of our numeric data had value for our predictions. This graph plots the percentage of successes above and below a median predictor value, in this case, the Goal Amount (USD) and the length of the Kickstarter (# of days). If the percentage for a predictor is heavily weighted one way or another (difference is large), it may indicate that the predictor has some relationship with the success/fail result. A bar graph pairing that is nearer to 50/50 shows a weaker or no relationship.
+
+This method of determining predictors is good when a predictor has a generally even distribution of numbers, but can be less accurate with more clumped data.
 
 # First model (Naive Bayes)
 
