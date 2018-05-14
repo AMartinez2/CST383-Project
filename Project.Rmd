@@ -125,7 +125,11 @@ prec_recall_summary = function(predicts, actuals) {
     prec_rec$false_pos = prec_rec$FP/(prec_rec$FP + prec_rec$TN)
     return(prec_rec)
 }
+normtp = (lrsumm$TP - min(lrsumm$TP))/ (max(lrsumm$TP) - min(lrsumm$TP))
+normfp = (lrsumm$FP - min(lrsumm$FP))/ (max(lrsumm$FP) - min(lrsumm$FP))
 
+plot(normtp ~ normfp, xlab = "FPR", ylab = "TPR", main = "ROC Curve")
+lines(normtp ~ normfp)
 
 ```
 
