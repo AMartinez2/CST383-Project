@@ -68,7 +68,7 @@ barplot(comb, beside = TRUE, ylim = c(0, 1), col = c("green", "red"), main = "An
 ```
 This was a method we used to see if any of our numeric data had value for our predictions. This graph plots the percentage of successes above and below a median predictor value, in this case, the Goal Amount (USD) and the length of the Kickstarter (# of days). If the percentage for a predictor is heavily weighted one way or another (difference is large), it may indicate that the predictor has some relationship with the success/fail result. A bar graph pairing that is nearer to 50/50 shows a weaker or no relationship.
 
-This method of determining predictors is good when a predictor has a generally even distribution of numbers, but can be less accurate with more clumped data.
+This method of determining predictors is good when a predictor has a generally even distribution of numbers, but can be less accurate with more clumped data. Due to this, goal was a much better predictor than length.
 
 # First model (Naive Bayes)
 
