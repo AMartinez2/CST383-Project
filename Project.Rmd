@@ -127,6 +127,10 @@ prec_recall_summary = function(predicts, actuals) {
 }
 
 predicts1 = as.numeric(y >= 0.6)
+
+plot(lrsumm$precision ~ lrsumm$threshold, xlab = "Threshold", ylab = "Precision", pch = 16)
+lines(lrsumm$precision ~ lrsumm$threshold)
+
 lrsumm = prec_recall_summary(predicts1, actuals)
 normtp = (lrsumm$TP - min(lrsumm$TP))/ (max(lrsumm$TP) - min(lrsumm$TP))
 normfp = (lrsumm$FP - min(lrsumm$FP))/ (max(lrsumm$FP) - min(lrsumm$FP))
