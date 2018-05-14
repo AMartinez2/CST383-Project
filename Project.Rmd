@@ -72,7 +72,7 @@ This method of determining predictors is good when a predictor has a generally e
 
 # First model (Naive Bayes)
 
-For our first model, we dicided to use Naive Bayes using only one predictor. This simple model yields roughly 66% percent accuracy and only guesses if a project will succeed or fail.
+For our first model, we decided to use Naive Bayes using only one predictor. This simple model yields roughly 66% percent accuracy and only guesses if a project will succeed or fail.
 
 ```{r}
 fit = naiveBayes(state ~ category, data=tr_dat)
@@ -80,7 +80,10 @@ predicts = predict(fit, newdata=te_dat)
 conf_mtx = table(predicts, te_dat$state)
 conf_mtx
 mean(predicts == te_dat$state)
+barplot(conf_mtx, beside = TRUE, col=c("red2", "green4"), main="Predicted vs Actual for Category", legend=c("Failure", "Success"))
 ```
+
+The plot above shows that the model was more inclined to  predict that a project would fail instead of succeed. The rate at which the Naive Bayes model predicted failure is staggeringly high, which would mean that 'category' is a strong predictor for a project's success in the event of a failure. This model begins to fall apart when the outcome was actually a success however, as it predicts that a project will fail nearly twice as often as it will succeed, even when the true outcome was success.
 
 # Second Model 
 
