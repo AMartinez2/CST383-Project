@@ -115,7 +115,7 @@ prec_recall_summary = function(predicts, actuals) {
     prec_rec = data.frame()
     actuals = factor(as.numeric(actuals))
     for (th in thresh) {
-      predicts =factor(as.numeric(test>=th),levels=c("0","1"))
+      predicts =factor(as.numeric(y>=th),levels=c("0","1"))
       prec_rec = rbind(prec_rec, as.vector(table(predicts, actuals)))
     }
     names(prec_rec) = c("TN", "FP", "FN", "TP")
@@ -125,6 +125,9 @@ prec_recall_summary = function(predicts, actuals) {
     prec_rec$false_pos = prec_rec$FP/(prec_rec$FP + prec_rec$TN)
     return(prec_rec)
 }
+
+predicts1 = as.numeric(y >= 0.6)
+lrsumm = prec_recall_summary(predicts1, actuals)
 normtp = (lrsumm$TP - min(lrsumm$TP))/ (max(lrsumm$TP) - min(lrsumm$TP))
 normfp = (lrsumm$FP - min(lrsumm$FP))/ (max(lrsumm$FP) - min(lrsumm$FP))
 
