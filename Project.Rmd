@@ -4,16 +4,23 @@ author: "Austin Martinez, Cameron Morefield, and Derek McFate"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-This report will utilize various factors from a publicly provided Kickstarter data set to determine the likelihood that a project will success or fail.
+This report will utilize various factors from a publicly provided Kickstarter data set to determine outcomes of a potential project The idea is to allow someone with a kickstarter idea to use their potential project's data to detirmin how successful it may be. 
 <br/>
+
 # Data Gathering and cleaning
-The data set used contains 378,661 entries, and each entry has 15 variables. There were 3797 entries that had N/A values somewhere in the row, which we decided to remove from the data set. The data set also included entries that had states other than 'Success' or 'Failure', so those entries were either condensed into the two states or dropped completely.
+The data set used contains 378,661 entries, and each entry has 15 variables. There were 3797
+entries that had N/A values somewhere in the row, which we decided to remove from the data
+set. The data set also included entries that had states other than 'Success' or 'Failure', so
+those entries were either condensed into the two states or dropped completely. We also derived
+a kicklen collumn from the launched and deadline dates so that we had another numeric field to
+work with. 
 Once the data was cleaned, it was split into training and test data.
+
 ```{r}
 set.seed(123)
 library(cluster)
@@ -35,24 +42,6 @@ te_dat = dat[-tr_rows,]
 
 # Initial Exploration and visualization
 
-Perhaps the goal for the project influences how people will look at project which would affect if they choose to contribute. If we look at the density of goal for projects that passed (in green) and failed (in red), we can see that values align well within the same curve. The goal of the project does not seem to affect wether it passes or fails. 
-
-```{r}
-pass = dat[dat$state == "successful",]
-fail = dat[dat$state == "failed",]
-plot(density(pass$goal), xlim=c(0,100000), col='green', main='Double Density of Goal')
-lines(density(fail$goal), col='red')
-```
-
-######### We might want to remove this ##############
-```{r}
-par(mar=c(3,6,1,4))
-pass = dat[dat$state == "successful",]
-fail = dat[dat$state == "failed",]
-test2 <- rbind(table(pass$main_category),table(fail$main_category))
-barplot(test2,beside=T, col=c('green','red'), horiz=TRUE, las=1)
-```
-
 ```{r}
 #goal
 medgoal = median(dat$goal)
@@ -72,38 +61,38 @@ barplot(a)
 ```
 
 # First model (Naive Bayes)
+
+For our first model, we dicided to use Naive Bayes using only one predictor. This simple model yields roughly 66% percent accuracy and only guesses if a project will succeed or fail.
+
 ```{r}
 fit = naiveBayes(state ~ category, data=tr_dat)
 predicts = predict(fit, newdata=te_dat)
 conf_mtx = table(predicts, te_dat$state)
-conf_mtx[c('failed','successful'),c('failed','successful')]
+conf_mtx
 mean(predicts == te_dat$state)
-```
-
-```{r}
-library(rpart)
-
-fit = rpart(state ~ goal, data = tr_dat)
-predicted = predict(fit, te_dat, type="class")
-actual = te_dat$state
-table(actual, predicted)
-mean(actual == predicted)
 ```
 
 # Second Model 
 
+With our second model we can predict both the probability that a project will succeed as well as simply guess wether it will or not. First we build our logistic regression model using [insert final options here]. With this, we can make predictions on the probability of success. 
+
 ```{r}
-fit = glm(state ~ main_category + goal, data=tr_dat, family=binomial)
+fit = glm(state ~ category + goal + kicklen, data=tr_dat, family=binomial)
 y = predict(fit, newdata=te_dat, type="response")
-predicts = ifelse(y > 0.5, "successful", "failed")
-actuals = te_dat$state
-conf_mtx = table(predicts, actuals)
-conf_mtx
-mean(predicts == actuals)
+plot(density(y), main="Density of Predictions")
 ```
 
-```{r}
+From our probability predictions, we can choose a threshold to detirmin succeed or fail. We will do so by iterating though the options from 0 to 1 and looking at the resulting accuracies. From there, we get our highest accuracy around 6. 
 
+```{r}
+acc = c()
+actuals = te_dat$state
+#conf_mtx = table(predicts, actuals)
+for (i in 0:10) {
+  predicts = ifelse(y > i/10, "successful", "failed")
+  acc = c(acc, mean(predicts == actuals))
+}
+plot(acc, type="l", col="red", main="Accuracy per Threshold")
 ```
 
 # Conclusion
