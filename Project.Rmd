@@ -92,7 +92,7 @@ The plot above shows that the model was more inclined to  predict that a project
 
 # Second Model (Logistic Regression)
 
-With our second model we can predict both the probability that a project will succeed as well as simply guess whether it will or not. First we build our logistic regression model using [insert final options here]. With this, we can make predictions on the probability of success. 
+With our second model we can predict both the probability that a project will succeed as well as simply guess whether it will or not. First we build our logistic regression model using category, goal, and kicklen. With this, we can make predictions on the probability of success. 
 
 ```{r}
 fit = suppressWarnings(glm(state ~ category + goal + kicklen, data=tr_dat, family=binomial))
