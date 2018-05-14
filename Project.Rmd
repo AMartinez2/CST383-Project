@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-This report will utilize various factors from a publicly provided Kickstarter data set to determine outcomes of a potential project The idea is to allow someone with a kickstarter idea to use their potential project's data to detirmin how successful it may be. 
+This report will utilize various factors from a publicly provided Kickstarter data set to determine outcomes of a potential project The idea is to allow someone with a kickstarter idea to use their potential project's data to determine how successful it may be. 
 <br/>
 
 # Data Gathering and cleaning
@@ -17,7 +17,7 @@ The data set used contains 378,661 entries, and each entry has 15 variables. The
 entries that had N/A values somewhere in the row, which we decided to remove from the data
 set. The data set also included entries that had states other than 'Success' or 'Failure', so
 those entries were either condensed into the two states or dropped completely. We also derived
-a kicklen collumn from the launched and deadline dates so that we had another numeric field to
+a kicklen column from the launched and deadline dates so that we had another numeric field to
 work with. 
 Once the data was cleaned, it was split into training and test data.
 
@@ -85,9 +85,9 @@ barplot(conf_mtx, beside = TRUE, col=c("red2", "green4"), main="Predicted vs Act
 
 The plot above shows that the model was more inclined to  predict that a project would fail instead of succeed. The rate at which the Naive Bayes model predicted failure is staggeringly high, which would mean that 'category' is a strong predictor for a project's success in the event of a failure. This model begins to fall apart when the outcome was actually a success however, as it predicts that a project will fail nearly twice as often as it will succeed, even when the true outcome was success.
 
-# Second Model 
+# Second Model (Logistic Regression)
 
-With our second model we can predict both the probability that a project will succeed as well as simply guess wether it will or not. First we build our logistic regression model using [insert final options here]. With this, we can make predictions on the probability of success. 
+With our second model we can predict both the probability that a project will succeed as well as simply guess whether it will or not. First we build our logistic regression model using [insert final options here]. With this, we can make predictions on the probability of success. 
 
 ```{r}
 fit = glm(state ~ category + goal + kicklen, data=tr_dat, family=binomial)
@@ -95,7 +95,7 @@ y = predict(fit, newdata=te_dat, type="response")
 plot(density(y), main="Density of Predictions")
 ```
 
-From our probability predictions, we can choose a threshold to detirmin succeed or fail. We will do so by iterating though the options from 0 to 1 and looking at the resulting accuracies. From there, we get our highest accuracy around 6. 
+From our probability predictions, we can choose a threshold to determine whether a project will succeed or fail. We will do so by iterating though the options from 0 to 1 and looking at the resulting accuracies. From there, we get our highest accuracy around 6. 
 
 ```{r}
 acc = c()
