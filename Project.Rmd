@@ -131,22 +131,44 @@ prec_recall_summary = function(predicts, actuals) {
     prec_rec$false_pos = prec_rec$FP/(prec_rec$FP + prec_rec$TN)
     return(prec_rec)
 }
-lrsumm = prec_recall_summary(predicts1, actuals)
 predicts1 = as.numeric(y >= 0.6)
+lrsumm = prec_recall_summary(predicts1, actuals)
+```
+
+In order to analyze the effectiveness of our logistic model, we created graphs using precision, recall, and threshold values. Our first analylitical graph shows Precision plotted over Threshold.
+
+```{r}
 #precision ~ thresh
-plot(lrsumm$precision ~ lrsumm$threshold, xlab = "Threshold", ylab = "Precision", pch = 16)
-lines(lrsumm$precision ~ lrsumm$threshold)
+plot(lrsumm$precision ~ lrsumm$threshold, xlab = "Threshold", ylab = "Precision", pch = 16, main = "Precision over Threshold", col = "blue4")
+lines(lrsumm$precision ~ lrsumm$threshold, col = "blue4")
+```
+
+The graph above shows that as the threshold value rises, the precision of the model slowly increases. The precision begins to get lower when the threshold is between 7.5 and 8, but once the threshold rises passed 8, the precision of the model becomes 1.
+
+Our next graph plots Recall values over the Threshold.
+
+```{r}
 #recall ~ thresh
-plot(lrsumm$recall ~ lrsumm$threshold, xlab = "Threshold", ylab = "recall", pch = 16)
-lines(lrsumm$recall ~ lrsumm$threshold)
+plot(lrsumm$recall ~ lrsumm$threshold, xlab = "Threshold", ylab = "Recall", pch = 16, main = "Recall over Threshold", col = "blue4")
+lines(lrsumm$recall ~ lrsumm$threshold, col = "blue4")
+```
+
+As expected, this graph scales inversely with the Precision/Recall graph. As the threshold increases, the recall of the model goes down until the threshold reaches 8. At that point, the recall for the model is zero.
+
+We also constructed an ROC Curve to act as a diagnostic representation of our logistic model.
+
+```{r}
 #ROC Curve
 normtp = (lrsumm$TP - min(lrsumm$TP))/ (max(lrsumm$TP) - min(lrsumm$TP))
 normfp = (lrsumm$FP - min(lrsumm$FP))/ (max(lrsumm$FP) - min(lrsumm$FP))
 
 plot(normtp ~ normfp, xlab = "FPR", ylab = "TPR", main = "ROC Curve")
 lines(normtp ~ normfp)
-
+abline(0, 1, col = "red2", lty = 2)
 ```
+
+The model is not very effective at making predictions, as the curve stayed relatively close to the central y = x base line.
+The rate of increase seems to taper off around 0.2. The ROC curve also did not have a well defined elbow as we had initally expected. If our predictions were more robust, we would expect a more pronounced logarithmic line.
 
 # Conclusion
 
