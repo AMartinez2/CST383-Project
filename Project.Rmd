@@ -23,7 +23,7 @@ Once the data was cleaned, it was split into training and test data.
 
 ```{r}
 set.seed(123)
-library(cluster)
+suppressWarnings(library(cluster))
 library(e1071)
 dat = read.csv("https://raw.githubusercontent.com/AMartinez2/CST383-Project/master/ks-projects-201801.csv")
 dat = dat[complete.cases(dat),]
@@ -42,6 +42,18 @@ te_dat = dat[-tr_rows,]
 
 # Initial Exploration and visualization
 
+There may be some categories that are far more popular than others, which would then affect the success of a project. So we look at the differences in number of successes to number of failures per category. It would seem that there is a noticable drop off in differences with very few categories at the top. Category may be something that we want to use a as a predictor.
+
+```{r}
+pass = dat[dat$state=="successful",]
+fail = dat[dat$state=="failed",]
+diffs = abs(table(pass$category) - table(fail$category))
+par(mar=c(3,9,1,1))
+barplot(head(sort(diffs)), horiz="true", las=1, col="red", main="Top 6 Largest Pass/Fail Discrepancies in Catagories")
+```
+
+</br>
+
 ```{r}
 #goal
 medgoal = median(dat$goal)
@@ -50,7 +62,7 @@ n_size = nrow(dat)
 under_med_goal_success = nrow(dat[dat$goal <= medgoal & dat$state == "successful",])/n_success
 over_med_goal_success = nrow(dat[dat$goal > medgoal & dat$state == "successful",])/n_success
 goalvec = c(under_med_goal_success,over_med_goal_success)
-a
+
 #length
 medlen = median(dat$kicklen)
 funder_med_len_success = nrow(dat[dat$kicklen <= medlen & dat$state == "successful",])/n_success
@@ -66,6 +78,7 @@ comb = c(goalvec, lenvecf)
 par(mfrow = c(2,1))
 barplot(comb, beside = TRUE, ylim = c(0, 1), col = c("green", "red"), main = "Analysis of available Numeric variables", names.arg = c("Goal1", "", "Length", ""),legend.text=c('Below or at Median','Above Median'), args.legend=list(text.col=c("green", "red"),bty='n'))
 ```
+
 This was a method we used to see if any of our numeric data had value for our predictions. This graph plots the percentage of successes above and below a median predictor value, in this case, the Goal Amount (USD) and the length of the Kickstarter (# of days). If the percentage for a predictor is heavily weighted one way or another (difference is large), it may indicate that the predictor has some relationship with the success/fail result. A bar graph pairing that is nearer to 50/50 shows a weaker or no relationship.
 
 This method of determining predictors is good when a predictor has a generally even distribution of numbers, but can be less accurate with more clumped data. Due to this, goal was a much better predictor than length.
@@ -78,7 +91,6 @@ For our first model, we decided to use Naive Bayes using only one predictor. Thi
 fit = naiveBayes(state ~ category, data=tr_dat)
 predicts = predict(fit, newdata=te_dat)
 conf_mtx = table(predicts, te_dat$state)
-conf_mtx
 mean(predicts == te_dat$state)
 barplot(conf_mtx, beside = TRUE, col=c("red2", "green4"), main="Predicted vs Actual for Category", legend=c("Failure", "Success"))
 ```
@@ -90,9 +102,9 @@ The plot above shows that the model was more inclined to  predict that a project
 With our second model we can predict both the probability that a project will succeed as well as simply guess whether it will or not. First we build our logistic regression model using [insert final options here]. With this, we can make predictions on the probability of success. 
 
 ```{r}
-fit = glm(state ~ category + goal + kicklen, data=tr_dat, family=binomial)
+fit = suppressWarnings(glm(state ~ category + goal + kicklen, data=tr_dat, family=binomial))
 y = predict(fit, newdata=te_dat, type="response")
-plot(density(y), main="Density of Predictions")
+plot(density(y), main="Density of Predictions", col="red")
 ```
 
 From our probability predictions, we can choose a threshold to determine whether a project will succeed or fail. We will do so by iterating though the options from 0 to 1 and looking at the resulting accuracies. From there, we get our highest accuracy around 6. 
@@ -125,7 +137,7 @@ prec_recall_summary = function(predicts, actuals) {
     prec_rec$false_pos = prec_rec$FP/(prec_rec$FP + prec_rec$TN)
     return(prec_rec)
 }
-
+lrsumm = prec_recall_summary(predicts1, actuals)
 predicts1 = as.numeric(y >= 0.6)
 #precision ~ thresh
 plot(lrsumm$precision ~ lrsumm$threshold, xlab = "Threshold", ylab = "Precision", pch = 16)
@@ -134,7 +146,6 @@ lines(lrsumm$precision ~ lrsumm$threshold)
 plot(lrsumm$recall ~ lrsumm$threshold, xlab = "Threshold", ylab = "recall", pch = 16)
 lines(lrsumm$recall ~ lrsumm$threshold)
 #ROC Curve
-lrsumm = prec_recall_summary(predicts1, actuals)
 normtp = (lrsumm$TP - min(lrsumm$TP))/ (max(lrsumm$TP) - min(lrsumm$TP))
 normfp = (lrsumm$FP - min(lrsumm$FP))/ (max(lrsumm$FP) - min(lrsumm$FP))
 
@@ -144,4 +155,3 @@ lines(normtp ~ normfp)
 ```
 
 # Conclusion
-
