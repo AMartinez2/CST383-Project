@@ -42,14 +42,14 @@ te_dat = dat[-tr_rows,]
 
 # Initial Exploration and Visualization
 
-There may be some categories that are far more popular than others, which would then affect the success of a project. So we look at the differences in number of successes to number of failures per category. It would seem that there is a noticable drop off in differences with very few categories at the top. Category may be something that we want to use a as a predictor.
+There may be some categories that are far more popular than others, which would then affect the success of a project. So we look at the differences in number of successes to number of failures per category. It would seem that there is a noticeable drop off in differences with very few categories at the top. Category may be something that we want to use a as a predictor.
 
 ```{r}
 pass = dat[dat$state=="successful",]
 fail = dat[dat$state=="failed",]
 diffs = abs(table(pass$main_category) - table(fail$main_category))
 par(mar=c(3,9,1,1))
-barplot(head(sort(diffs)), horiz="true", las=1, col="red", main="Top 6 Largest Pass/Fail Discrepancies in Catagories")
+barplot(head(sort(diffs)), horiz="true", las=1, col="red", main="Top 6 Largest Pass/Fail Discrepancies in Categories")
 ```
 
 </br>
@@ -111,7 +111,7 @@ for (i in 0:10) {
   acc = c(acc, mean(predicts == actuals))
 }
 se = seq(0, 1, by=0.1)
-plot(acc, type="l", col="red", main="Accuracy per Threshold", ylab="Accuracy", xlab="Threashold / 10")
+plot(acc, type="l", col="red", main="Accuracy per Threshold", ylab="Accuracy", xlab="Threshold / 10")
 ```
 
 ```{r}
@@ -135,7 +135,7 @@ predicts1 = as.numeric(y >= 0.6)
 lrsumm = prec_recall_summary(predicts1, actuals)
 ```
 
-In order to analyze the effectiveness of our logistic model, we created graphs using precision, recall, and threshold values. Our first analylitical graph shows Precision plotted over Threshold.
+In order to analyze the effectiveness of our logistic model, we created graphs using precision, recall, and threshold values. Our first analytical graph shows Precision plotted over Threshold.
 
 ```{r}
 #precision ~ thresh
@@ -168,7 +168,7 @@ abline(0, 1, col = "red2", lty = 2)
 ```
 
 The model is not very effective at making predictions, as the curve stayed relatively close to the central y = x base line.
-The rate of increase seems to taper off around 0.2. The ROC curve also did not have a well defined elbow as we had initally expected. If our predictions were more robust, we would expect a more pronounced logarithmic line.
+The rate of increase seems to taper off around 0.2. The ROC curve also did not have a well defined elbow as we had initially expected. If our predictions were more robust, we would expect a more pronounced logarithmic line.
 
 # Conclusion
 
@@ -178,4 +178,4 @@ Both of the models created here peaked at a ~65% prediction success rate. Naive 
 
 ### Overall thoughts
 
-Our modeling showed that there is some potential patterning between different Kickstarters. It may be possible to get a weak sense of whether or not a product will succeed or fail, but otherwise, more sutble factors probably have a much greater impact on the success or fail rate. Usually a Kickstarter that has an open development process, clearly defined goals and ideas, as well as an experienced team for the Kickstarter all play enormously larger roles in if a Kickstarter succeeds. These attributes are enormously hard to quantify with standard data sets.     
+Our modeling showed that there is some potential patterning between different Kickstarters. It may be possible to get a weak sense of whether or not a product will succeed or fail, but otherwise, more subtle factors probably have a much greater impact on the success or fail rate. Usually a Kickstarter that has an open development process, clearly defined goals and ideas, as well as an experienced team for the Kickstarter all play enormously larger roles in if a Kickstarter succeeds. These attributes are enormously hard to quantify with standard data sets.     
